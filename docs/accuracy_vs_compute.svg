@@ -1,9 +1,9 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="796" height="290" viewBox="0 0 796 290" font-family="Helvetica, Arial, sans-serif">
-<rect width="796" height="290" fill="#fcfcfb"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="1052" height="290" viewBox="0 0 1052 290" font-family="Helvetica, Arial, sans-serif">
+<rect width="1052" height="290" fill="#fcfcfb"/>
 <text x="50" y="24" font-size="14" font-weight="600" fill="#2b2b29">Accuracy vs. compute per problem (higher and further left is better)</text>
 <circle cx="55" cy="42" r="5" fill="#2a78d6"/><text x="65" y="46" font-size="12" fill="#2b2b29">latent</text>
 <circle cx="139" cy="42" r="5" fill="#eb6834"/><text x="149" y="46" font-size="12" fill="#2b2b29">baseline</text>
-<text x="50" y="64" font-size="12" font-weight="600" fill="#2b2b29">GSM8K (n = 500)</text>
+<text x="50" y="64" font-size="12" font-weight="600" fill="#2b2b29">GSM8K, 2,048 cap (n = 500)</text>
 <line x1="50" x2="260" y1="234.0" y2="234.0" stroke="#e4e3df"/><text x="44" y="238.0" font-size="10" fill="#6b6b66" text-anchor="end">70%</text>
 <line x1="50" x2="260" y1="154.0" y2="154.0" stroke="#e4e3df"/><text x="44" y="158.0" font-size="10" fill="#6b6b66" text-anchor="end">85%</text>
 <line x1="50" x2="260" y1="74.0" y2="74.0" stroke="#e4e3df"/><text x="44" y="78.0" font-size="10" fill="#6b6b66" text-anchor="end">100%</text>
@@ -14,26 +14,37 @@
 <line x1="102.4" y1="120.9" x2="205.3" y2="152.9" stroke="#e4e3df" stroke-width="2"/>
 <circle cx="102.4" cy="120.9" r="5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/><text x="102.4" y="110.9" font-size="10" fill="#2b2b29" text-anchor="middle">91.2%</text>
 <circle cx="205.3" cy="152.9" r="5" fill="#eb6834" stroke="#fcfcfb" stroke-width="2"/><text x="205.3" y="142.9" font-size="10" fill="#2b2b29" text-anchor="middle">85.2%</text>
-<text x="306" y="64" font-size="12" font-weight="600" fill="#2b2b29">AMC 2023 (n = 40)</text>
-<line x1="306" x2="516" y1="234.0" y2="234.0" stroke="#e4e3df"/><text x="300" y="238.0" font-size="10" fill="#6b6b66" text-anchor="end">40%</text>
-<line x1="306" x2="516" y1="154.0" y2="154.0" stroke="#e4e3df"/><text x="300" y="158.0" font-size="10" fill="#6b6b66" text-anchor="end">55%</text>
-<line x1="306" x2="516" y1="74.0" y2="74.0" stroke="#e4e3df"/><text x="300" y="78.0" font-size="10" fill="#6b6b66" text-anchor="end">70%</text>
-<text x="306.0" y="250" font-size="10" fill="#6b6b66" text-anchor="middle">2,846</text>
-<text x="411.0" y="250" font-size="10" fill="#6b6b66" text-anchor="middle">3,616</text>
-<text x="516.0" y="250" font-size="10" fill="#6b6b66" text-anchor="middle">4,387</text>
+<text x="306" y="64" font-size="12" font-weight="600" fill="#2b2b29">GSM8K, 4,096 cap (n = 500)</text>
+<line x1="306" x2="516" y1="234.0" y2="234.0" stroke="#e4e3df"/><text x="300" y="238.0" font-size="10" fill="#6b6b66" text-anchor="end">80%</text>
+<line x1="306" x2="516" y1="154.0" y2="154.0" stroke="#e4e3df"/><text x="300" y="158.0" font-size="10" fill="#6b6b66" text-anchor="end">90%</text>
+<line x1="306" x2="516" y1="74.0" y2="74.0" stroke="#e4e3df"/><text x="300" y="78.0" font-size="10" fill="#6b6b66" text-anchor="end">100%</text>
+<text x="306.0" y="250" font-size="10" fill="#6b6b66" text-anchor="middle">1,016</text>
+<text x="411.0" y="250" font-size="10" fill="#6b6b66" text-anchor="middle">1,658</text>
+<text x="516.0" y="250" font-size="10" fill="#6b6b66" text-anchor="middle">2,300</text>
 <text x="411.0" y="268" font-size="10" fill="#6b6b66" text-anchor="middle">mean forward passes per problem</text>
-<line x1="402.9" y1="114.0" x2="438.0" y2="167.3" stroke="#e4e3df" stroke-width="2"/>
-<circle cx="402.9" cy="114.0" r="5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/><text x="402.9" y="104.0" font-size="10" fill="#2b2b29" text-anchor="middle">62.5%</text>
-<circle cx="438.0" cy="167.3" r="5" fill="#eb6834" stroke="#fcfcfb" stroke-width="2"/><text x="438.0" y="157.3" font-size="10" fill="#2b2b29" text-anchor="middle">52.5%</text>
-<text x="562" y="64" font-size="12" font-weight="600" fill="#2b2b29">AIME 2024+2025 (n = 60)</text>
-<line x1="562" x2="772" y1="234.0" y2="234.0" stroke="#e4e3df"/><text x="556" y="238.0" font-size="10" fill="#6b6b66" text-anchor="end">0%</text>
-<line x1="562" x2="772" y1="154.0" y2="154.0" stroke="#e4e3df"/><text x="556" y="158.0" font-size="10" fill="#6b6b66" text-anchor="end">5%</text>
-<line x1="562" x2="772" y1="74.0" y2="74.0" stroke="#e4e3df"/><text x="556" y="78.0" font-size="10" fill="#6b6b66" text-anchor="end">10%</text>
-<text x="562.0" y="250" font-size="10" fill="#6b6b66" text-anchor="middle">1,638</text>
-<text x="667.0" y="250" font-size="10" fill="#6b6b66" text-anchor="middle">2,070</text>
-<text x="772.0" y="250" font-size="10" fill="#6b6b66" text-anchor="middle">2,502</text>
+<line x1="347.6" y1="120.4" x2="466.9" y2="123.6" stroke="#e4e3df" stroke-width="2"/>
+<circle cx="347.6" cy="120.4" r="5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/><text x="347.6" y="110.4" font-size="10" fill="#2b2b29" text-anchor="middle">94.2%</text>
+<circle cx="466.9" cy="123.6" r="5" fill="#eb6834" stroke="#fcfcfb" stroke-width="2"/><text x="466.9" y="113.6" font-size="10" fill="#2b2b29" text-anchor="middle">93.8%</text>
+<text x="562" y="64" font-size="12" font-weight="600" fill="#2b2b29">AMC 2023, 4,096 cap (n = 40)</text>
+<line x1="562" x2="772" y1="234.0" y2="234.0" stroke="#e4e3df"/><text x="556" y="238.0" font-size="10" fill="#6b6b66" text-anchor="end">40%</text>
+<line x1="562" x2="772" y1="154.0" y2="154.0" stroke="#e4e3df"/><text x="556" y="158.0" font-size="10" fill="#6b6b66" text-anchor="end">55%</text>
+<line x1="562" x2="772" y1="74.0" y2="74.0" stroke="#e4e3df"/><text x="556" y="78.0" font-size="10" fill="#6b6b66" text-anchor="end">70%</text>
+<text x="562.0" y="250" font-size="10" fill="#6b6b66" text-anchor="middle">2,846</text>
+<text x="667.0" y="250" font-size="10" fill="#6b6b66" text-anchor="middle">3,616</text>
+<text x="772.0" y="250" font-size="10" fill="#6b6b66" text-anchor="middle">4,387</text>
 <text x="667.0" y="268" font-size="10" fill="#6b6b66" text-anchor="middle">mean forward passes per problem</text>
-<line x1="692.7" y1="127.3" x2="661.6" y2="180.7" stroke="#e4e3df" stroke-width="2"/>
-<circle cx="692.7" cy="127.3" r="5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/><text x="692.7" y="117.3" font-size="10" fill="#2b2b29" text-anchor="middle">6.7%</text>
-<circle cx="661.6" cy="180.7" r="5" fill="#eb6834" stroke="#fcfcfb" stroke-width="2"/><text x="661.6" y="170.7" font-size="10" fill="#2b2b29" text-anchor="middle">3.3%</text>
+<line x1="658.9" y1="114.0" x2="694.0" y2="167.3" stroke="#e4e3df" stroke-width="2"/>
+<circle cx="658.9" cy="114.0" r="5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/><text x="658.9" y="104.0" font-size="10" fill="#2b2b29" text-anchor="middle">62.5%</text>
+<circle cx="694.0" cy="167.3" r="5" fill="#eb6834" stroke="#fcfcfb" stroke-width="2"/><text x="694.0" y="157.3" font-size="10" fill="#2b2b29" text-anchor="middle">52.5%</text>
+<text x="818" y="64" font-size="12" font-weight="600" fill="#2b2b29">AIME 24+25, 2,048 cap (n = 60)</text>
+<line x1="818" x2="1028" y1="234.0" y2="234.0" stroke="#e4e3df"/><text x="812" y="238.0" font-size="10" fill="#6b6b66" text-anchor="end">0%</text>
+<line x1="818" x2="1028" y1="154.0" y2="154.0" stroke="#e4e3df"/><text x="812" y="158.0" font-size="10" fill="#6b6b66" text-anchor="end">5%</text>
+<line x1="818" x2="1028" y1="74.0" y2="74.0" stroke="#e4e3df"/><text x="812" y="78.0" font-size="10" fill="#6b6b66" text-anchor="end">10%</text>
+<text x="818.0" y="250" font-size="10" fill="#6b6b66" text-anchor="middle">1,638</text>
+<text x="923.0" y="250" font-size="10" fill="#6b6b66" text-anchor="middle">2,070</text>
+<text x="1028.0" y="250" font-size="10" fill="#6b6b66" text-anchor="middle">2,502</text>
+<text x="923.0" y="268" font-size="10" fill="#6b6b66" text-anchor="middle">mean forward passes per problem</text>
+<line x1="948.7" y1="127.3" x2="917.6" y2="180.7" stroke="#e4e3df" stroke-width="2"/>
+<circle cx="948.7" cy="127.3" r="5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/><text x="948.7" y="117.3" font-size="10" fill="#2b2b29" text-anchor="middle">6.7%</text>
+<circle cx="917.6" cy="180.7" r="5" fill="#eb6834" stroke="#fcfcfb" stroke-width="2"/><text x="917.6" y="170.7" font-size="10" fill="#2b2b29" text-anchor="middle">3.3%</text>
 </svg>

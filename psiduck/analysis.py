@@ -147,14 +147,14 @@ def dataset_section(title: str, results: dict[str, dict[int, dict]], expected_n:
                 f"- Wall-clock time (measured per problem, same GPU): {cfg} took "
                 f"{abs(100 * c['wall_reduction']):.1f}% {direction} time than baseline."
             )
-        if c["acc_diff"] < 0:
-            verdict = f"{cfg} is **less accurate** than the baseline on these problems"
+        if c["p"] >= 0.05:
+            verdict = (f"no statistically significant accuracy difference between {cfg} and the baseline "
+                       f"({100 * c['acc_diff']:+.1f} points, alpha = 0.05)")
         elif c["acc_diff"] > 0:
-            verdict = f"{cfg} is more accurate than the baseline on these problems"
+            verdict = f"{cfg} is more accurate than the baseline, and the difference is statistically significant"
         else:
-            verdict = f"{cfg} and the baseline have the same accuracy on these problems"
-        sig = "statistically significant" if c["p"] < 0.05 else "**not** statistically significant"
-        lines += [f"- Verdict: {verdict}; the difference is {sig} (alpha = 0.05).", ""]
+            verdict = f"{cfg} is **less accurate** than the baseline, and the difference is statistically significant"
+        lines += [f"- Verdict: {verdict}.", ""]
     return lines
 
 
@@ -232,14 +232,30 @@ def build_tldr(results_dir: Path, plan: Optional[dict]) -> str:
         return "_Results pending._"
     lat, base, c = h["lat"], h["base"], h["pair"]
     sig = "statistically significant" if c["p"] < 0.05 else "not statistically significant"
-    lines = [
-        f"On {h['n']} GSM8K problems ({h['model']}), the latent pipeline scored "
-        f"**{100 * lat['correct'] / lat['n']:.1f}%** vs **{100 * base['correct'] / base['n']:.1f}%** for single-model "
-        f"chain-of-thought ({sig}, exact McNemar p = {_p(c['p'])}), with {100 * c['token_reduction']:.1f}% fewer "
-        f"generated tokens, {c['forward_ratio']:.2f}x the forward passes and {100 * c['wall_reduction']:.1f}% less "
-        f"wall-clock time, **all at a {h['cap']:,}-token cap**, where the baseline ran out of budget on "
-        f"{base['cap_hits']}/{base['n']} problems vs {lat['cap_hits']}/{lat['n']} for latent.",
-    ]
+    exp1 = (
+        f"the latent pipeline scored {100 * lat['correct'] / lat['n']:.1f}% vs {100 * base['correct'] / base['n']:.1f}% "
+        f"({sig}, exact McNemar p = {_p(c['p'])}), with {100 * c['token_reduction']:.1f}% fewer generated tokens, "
+        f"{c['forward_ratio']:.2f}x the forward passes and {100 * c['wall_reduction']:.1f}% less wall-clock time; "
+        f"there the baseline ran out of budget on {base['cap_hits']}/{base['n']} problems vs "
+        f"{lat['cap_hits']}/{lat['n']} for latent."
+    )
+    e3 = _exp3(results_dir)
+    if e3:
+        l3, b3, c3, c200 = e3
+        sig3 = "a statistically significant difference" if c3["p"] < 0.05 else "no statistically significant difference"
+        lines = [
+            f"On {l3['n']} GSM8K problems ({h['model']}) with a 4,096-token cap, the latent pipeline reached "
+            f"**{100 * l3['correct'] / l3['n']:.1f}%** vs **{100 * b3['correct'] / b3['n']:.1f}%** for single-model "
+            f"chain-of-thought ({sig3}, exact McNemar p = {_p(c3['p'])}; pre-registered first 200 problems: "
+            f"p = {_p(c200['p'])}) while generating **{100 * c3['token_reduction']:.1f}% fewer tokens**, using "
+            f"{c3['forward_ratio']:.2f}x the forward passes and {100 * c3['wall_reduction']:.1f}% less wall-clock time.",
+            f"At a {h['cap']:,}-token cap (Experiment 1), {exp1} That accuracy gap disappears once the baseline has "
+            "room to finish.",
+        ]
+    else:
+        lines = [
+            f"On {h['n']} GSM8K problems ({h['model']}) at a {h['cap']:,}-token cap, {exp1}",
+        ]
     others = []
     for name, label in (("aime", "AIME 2024+2025"), ("amc23", "AMC 2023")):
         r = load_results(results_dir, name, None)
@@ -251,11 +267,26 @@ def build_tldr(results_dir: Path, plan: Optional[dict]) -> str:
     return "\n".join(lines)
 
 
+def _exp3(results_dir: Path):
+    """(latent stats, baseline stats, paired 500, paired first 200) for Experiment 3, or None."""
+    r = load_results(results_dir, "gsm8k_4096", 500)
+    if "latent" not in r or "baseline" not in r or min(len(r["latent"]), len(r["baseline"])) < 500:
+        return None
+    first = {cfg: {i: x for i, x in r[cfg].items() if i < 200} for cfg in ("latent", "baseline")}
+    return (config_stats(list(r["latent"].values())), config_stats(list(r["baseline"].values())),
+            paired(r["latent"], r["baseline"]), paired(first["latent"], first["baseline"]))
+
+
 def build_limitations(results_dir: Path, plan: Optional[dict]) -> str:
     h = _headline(results_dir, plan)
     if h is None:
         return "_Results pending._"
     lat, base, s = h["lat"], h["base"], h["settings"]
+    e3 = _exp3(results_dir)
+    truncation = (
+        f"Experiment 3 shows the gap disappears at a 4,096-token cap (exact McNemar p = {_p(e3[2]['p'])}, n = 500)."
+        if e3 else "Experiment 3 tests this."
+    )
     return "\n".join([
         f"- **One model.** Every result uses {h['model']} ({s['quantization']}); results may not transfer to other "
         "models or sizes.",
@@ -263,11 +294,12 @@ def build_limitations(results_dir: Path, plan: Optional[dict]) -> str:
         "problem; run-to-run variance is not measured beyond the paired test.",
         f"- **Baseline truncation.** At the {h['cap']:,}-token cap the baseline hit the cap on "
         f"{base['cap_hits']}/{base['n']} GSM8K problems vs {lat['cap_hits']}/{lat['n']} for latent, so part of the "
-        "accuracy gap comes from finishing within the budget. Experiment 3 tests this.",
+        f"accuracy gap could come from finishing within the budget. {truncation}",
         "- **Latent content vs. extra context.** No control replaces or removes the latent states, so it is untested "
         "whether the gain comes from their content or simply from the extra latent positions.",
-        "- **AMC was added afterwards.** Experiment 2 (AMC 2023) was registered after Experiment 1 finished, and its "
-        "first 2 problems were seen in an exploratory smoke test.",
+        "- **Later additions.** Experiment 2 (AMC 2023) was registered after Experiment 1 finished, and its first 2 "
+        "problems were seen in an exploratory smoke test. Experiment 3 was extended from 200 to 500 problems while "
+        "running, before any of its accuracy was viewed; the pre-registered 200-problem result is reported separately.",
         "- **AIME and AMC are inconclusive.** On AIME both configs hit the cap on every problem, and AMC has only 40 "
         "problems; neither supports a conclusion.",
         "- **What the compute numbers mean.** Generated tokens count only written text; forward passes also count "
@@ -282,8 +314,10 @@ def write_figure(results_dir: Path, plan: Optional[dict], path: Path) -> bool:
     """Static SVG: accuracy vs mean forward passes per problem, one small panel per benchmark."""
     n = plan.get("n") if plan else None
     panels = []
-    for name, title, limit in (("gsm8k", f"GSM8K (n = {n})", n), ("amc23", "AMC 2023 (n = 40)", None),
-                               ("aime", "AIME 2024+2025 (n = 60)", None)):
+    for name, title, limit in (("gsm8k", f"GSM8K, 2,048 cap (n = {n})", n),
+                               ("gsm8k_4096", "GSM8K, 4,096 cap (n = 500)", 500),
+                               ("amc23", "AMC 2023, 4,096 cap (n = 40)", None),
+                               ("aime", "AIME 24+25, 2,048 cap (n = 60)", None)):
         r = load_results(results_dir, name, limit)
         if "latent" in r and "baseline" in r:
             st = {cfg: config_stats(list(r[cfg].values())) for cfg in ("latent", "baseline")}
