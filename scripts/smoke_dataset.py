@@ -2,7 +2,7 @@
 
     python scripts/smoke_dataset.py amc23 --k 3 --max-new-tokens 4096
 
-Writes results/explore/<dataset>_smoke.jsonl. Not part of any pre-registered run.
+Writes results/explore/<dataset>_smoke.jsonl. Exploratory only; not part of the reported results.
 """
 
 from __future__ import annotations

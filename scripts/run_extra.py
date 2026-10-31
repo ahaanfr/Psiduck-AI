@@ -1,11 +1,11 @@
-"""Resumable run of both configs on one extra dataset (Experiments 2 and 3 in EVAL_PLAN.md).
+"""Resumable run of both configs on one extra dataset (Experiments 2 and 3).
 
     python scripts/run_extra.py amc23 --max-new-tokens 4096
     python scripts/run_extra.py gsm8k --max-new-tokens 4096 --shuffled --n 200 --interleave --out gsm8k_4096
 
 Writes results/<out>/{latent,baseline}.jsonl in the same format as the main
 runner, so analysis.dataset_section can score it. Re-running skips finished problems.
---shuffled uses the pre-registered seed-42 order (the same problems, in the same
+--shuffled uses the fixed seed-42 order (the same problems, in the same
 order and with the same per-problem seeds, as the main GSM8K run). --interleave
 runs latent then baseline on each problem before moving on, so a run cut short
 still leaves complete pairs.
@@ -36,7 +36,7 @@ def main() -> int:
     ap.add_argument("dataset")
     ap.add_argument("--max-new-tokens", type=int, required=True)
     ap.add_argument("--n", type=int, default=None, help="only the first N problems")
-    ap.add_argument("--shuffled", action="store_true", help="use the pre-registered seed-42 order")
+    ap.add_argument("--shuffled", action="store_true", help="use the fixed seed-42 order")
     ap.add_argument("--interleave", action="store_true", help="both configs per problem, then the next problem")
     ap.add_argument("--out", default=None, help="results subfolder (default: the dataset name)")
     args = ap.parse_args()

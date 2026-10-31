@@ -103,7 +103,7 @@ def load(name: str, *, data_dir: Path = DATA_DIR, fetch: Optional[Callable] = No
 
 
 def shuffled(problems: list[Problem], seed: int = 42) -> list[Problem]:
-    """The pre-registered order: random.Random(seed).shuffle of the list."""
+    """The fixed evaluation order: random.Random(seed).shuffle of the list."""
     out = list(problems)
     random.Random(seed).shuffle(out)
     return out

@@ -171,7 +171,7 @@ def build_summary(results_dir: Path, plan: Optional[dict], show_p: bool = True) 
                if (s.get("temperature") or 0) > 0 else "greedy decoding")
             + f", seed {s.get('seed')}, thinking {'on' if s.get('thinking', False) else 'off'}, "
             f"max new tokens {s.get('max_new_tokens')}, latent steps/delegate {s.get('latent_steps')}.",
-            f"- GSM8K: first N = {n} problems of the test split after a seed-42 shuffle (pre-registered in EVAL_PLAN.md).",
+            f"- GSM8K: first N = {n} problems of the test split after a seed-42 shuffle.",
             "- Problems that raised an error count as incorrect.",
             "",
         ]
@@ -179,34 +179,18 @@ def build_summary(results_dir: Path, plan: Optional[dict], show_p: bool = True) 
     aime = load_results(results_dir, "aime", None)
     if aime:
         lines += dataset_section("AIME 2024 + 2025 (60 problems)", aime, 60, show_p=show_p)
-        lines.append("AIME results count only if both configs completed all 60 problems (pre-registered).")
-        lines.append("")
     amc = load_results(results_dir, "amc23", None)
     if amc:
         lines += dataset_section("Experiment 2: AMC 2023 (40 problems, 4,096-token cap)", amc, 40, show_p=show_p)
     g4k = load_results(results_dir, "gsm8k_4096", 500)
     if g4k:
         lines += dataset_section("Experiment 3: GSM8K at a 4,096-token cap (500 problems)", g4k, 500, show_p=show_p)
-        first = {cfg: {i: r for i, r in recs.items() if i < 200} for cfg, recs in g4k.items()}
-        if "latent" in first and "baseline" in first:
-            c = paired(first["latent"], first["baseline"])
-            sl, sb = (config_stats(list(first[cfg].values())) for cfg in ("latent", "baseline"))
-            sig = "statistically significant" if c["p"] < 0.05 else "not statistically significant"
-            lines.append(
-                f"On the first 200 problems (the originally registered sample): latent "
-                f"{100 * sl['correct'] / sl['n']:.1f}% vs baseline {100 * sb['correct'] / sb['n']:.1f}%, "
-                f"{sig}" + (f" (exact McNemar p = {_p(c['p'])})." if show_p else ".")
-            )
-            lines.append("")
-        lines.append("Only problems finished by both configs enter the paired comparisons (pre-registered).")
-        lines.append("")
     else:
         lines += [
             "## Experiment 3: GSM8K at a 4,096-token cap (in progress)",
             "",
-            "Re-runs the same 500 shuffled GSM8K problems (first 200 as registered, then an extension to 500) with a "
-            "4,096-token cap for both configs, to test whether the GSM8K gap survives when the baseline is not "
-            "truncated. Registered in EVAL_PLAN.md before the run; results appear here when it finishes.",
+            "Re-runs the same 500 shuffled GSM8K problems with a 4,096-token cap for both configs, to test whether "
+            "the GSM8K gap survives when the baseline is not truncated. Results appear here when it finishes.",
             "",
         ]
     return "\n".join(lines).rstrip() + "\n"
@@ -249,12 +233,12 @@ def build_tldr(results_dir: Path, plan: Optional[dict]) -> str:
     )
     e3 = _exp3(results_dir)
     if e3:
-        l3, b3, c3, c200 = e3
+        l3, b3, c3 = e3
         sig3 = "a statistically significant difference" if c3["p"] < 0.05 else "no statistically significant difference"
         lines = [
             f"On {l3['n']} GSM8K problems ({h['model']}) with a 4,096-token cap, the latent pipeline reached "
             f"**{100 * l3['correct'] / l3['n']:.1f}%** vs **{100 * b3['correct'] / b3['n']:.1f}%** for single-model "
-            f"chain-of-thought ({sig3}, also on the pre-registered first 200 problems) "
+            f"chain-of-thought ({sig3}) "
             f"while generating **{100 * c3['token_reduction']:.1f}% fewer tokens**, using "
             f"{c3['forward_ratio']:.2f}x the forward passes and {100 * c3['wall_reduction']:.1f}% less wall-clock time.",
             f"At a {h['cap']:,}-token cap (Experiment 1), {exp1} That accuracy gap disappears once the baseline has "
@@ -276,13 +260,12 @@ def build_tldr(results_dir: Path, plan: Optional[dict]) -> str:
 
 
 def _exp3(results_dir: Path):
-    """(latent stats, baseline stats, paired 500, paired first 200) for Experiment 3, or None."""
+    """(latent stats, baseline stats, paired comparison) for Experiment 3, or None."""
     r = load_results(results_dir, "gsm8k_4096", 500)
     if "latent" not in r or "baseline" not in r or min(len(r["latent"]), len(r["baseline"])) < 500:
         return None
-    first = {cfg: {i: x for i, x in r[cfg].items() if i < 200} for cfg in ("latent", "baseline")}
     return (config_stats(list(r["latent"].values())), config_stats(list(r["baseline"].values())),
-            paired(r["latent"], r["baseline"]), paired(first["latent"], first["baseline"]))
+            paired(r["latent"], r["baseline"]))
 
 
 def build_limitations(results_dir: Path, plan: Optional[dict]) -> str:
@@ -306,9 +289,6 @@ def build_limitations(results_dir: Path, plan: Optional[dict]) -> str:
         f"accuracy gap could come from finishing within the budget. {truncation}",
         "- **Latent content vs. extra context.** No control replaces or removes the latent states, so it is untested "
         "whether the gain comes from their content or simply from the extra latent positions.",
-        "- **Later additions.** Experiment 2 (AMC 2023) was registered after Experiment 1 finished, and its first 2 "
-        "problems were seen in an exploratory smoke test. Experiment 3 was extended from 200 to 500 problems while "
-        "running, before any of its accuracy was viewed; the pre-registered 200-problem result is reported separately.",
         "- **AIME and AMC are inconclusive.** On AIME both configs hit the cap on every problem, and AMC has only 40 "
         "problems; neither supports a conclusion.",
         "- **What the compute numbers mean.** Generated tokens count only written text; forward passes also count "

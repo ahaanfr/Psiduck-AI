@@ -39,14 +39,12 @@ def fake_env(tmp_path, monkeypatch):
     def load(name):
         return gsm if name == "gsm8k" else aime
 
-    plan = tmp_path / "EVAL_PLAN.md"
-    plan.write_text(f"x\n{runner.N_START}\nN = pending\n{runner.N_END}\ny\n")
     readme = tmp_path / "README.md"
     readme.write_text(f"# R\n{analysis.README_START}\npending\n{analysis.README_END}\nend\n")
     sent = []
     r = runner.Runner(
         Settings(max_new_tokens=64), lambda s: FakeBackbone(), results_dir=tmp_path / "results",
-        eval_plan=plan, readme=readme, notify=lambda t, m, **k: sent.append(m) or True,
+        readme=readme, notify=lambda t, m, **k: sent.append(m) or True,
         status_interval=3600, load_dataset=load,
     )
     monkeypatch.setattr(runner, "choose_n", lambda sec, **k: 50)
@@ -59,7 +57,6 @@ def test_full_run_end_to_end(fake_env):
     assert r.run() == 0
     res = tmp / "results"
     assert json.loads((res / "plan_lock.json").read_text())["n"] == 50
-    assert "**N = 50**" in (tmp / "EVAL_PLAN.md").read_text()
     for dataset, cfg in runner.JOBS:
         recs = analysis.read_jsonl(res / dataset / f"{cfg}.jsonl")
         assert len(recs) == (50 if dataset == "gsm8k" else 60)

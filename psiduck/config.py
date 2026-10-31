@@ -1,6 +1,5 @@
-"""Run settings. Defaults are the pre-registered values in EVAL_PLAN.md;
-environment variables exist so a rented GPU can change model/quantization
-for a *separate*, separately-registered run.
+"""Run settings. Defaults are the values used for the reported results; environment
+variables override them (e.g. PSIDUCK_QUANT=nf4 for smaller GPUs).
 """
 
 from __future__ import annotations

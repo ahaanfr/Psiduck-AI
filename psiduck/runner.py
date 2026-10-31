@@ -34,8 +34,7 @@ JOBS = (("gsm8k", "latent"), ("gsm8k", "baseline"), ("aime", "latent"), ("aime",
 MAX_CONSECUTIVE_ERRORS = 5
 MAX_ATTEMPTS = 2
 FALLBACK_MODEL = "Qwen/Qwen3-4B"
-MIN_N_PRIMARY = 200  # below this, Qwen3-8B counts as "unusably slow" (pre-registered)
-N_START, N_END = "<!-- N:START -->", "<!-- N:END -->"
+MIN_N_PRIMARY = 200  # below this, Qwen3-8B counts as "unusably slow"
 
 
 def choose_n(sec_per_problem: dict[str, float], budget_s: float = 13 * 3600,
@@ -65,13 +64,12 @@ class ConfigFailed(Exception):
 
 class Runner:
     def __init__(self, settings, make_backbone: Callable, results_dir: Path = REPO_ROOT / "results",
-                 eval_plan: Path = REPO_ROOT / "EVAL_PLAN.md", readme: Path = REPO_ROOT / "README.md",
+                 readme: Path = REPO_ROOT / "README.md",
                  allow_battery: bool = False, notify: Callable = system.notify, status_interval: float = 30.0,
                  load_dataset: Callable = data.load):
         self.settings = settings
         self.make_backbone = make_backbone
         self.dir = results_dir
-        self.eval_plan = eval_plan
         self.readme = readme
         self.allow_battery = allow_battery
         self._notify = notify
@@ -232,30 +230,11 @@ class Runner:
         }
         self.dir.mkdir(parents=True, exist_ok=True)
         self.plan_path.write_text(json.dumps(plan, indent=2))
-        self._write_n_into_eval_plan(plan)
         msg = (f"Smoke done. sec/problem: " + ", ".join(f"{k} {v:.1f}" for k, v in sec.items())
                + f". Locked N = {n} GSM8K problems per config.")
         self.log(msg)
         self.notify(msg)
         return plan
-
-    def _write_n_into_eval_plan(self, plan: dict) -> None:
-        try:
-            text = self.eval_plan.read_text(encoding="utf-8")
-            if N_START not in text:
-                return
-            sec = plan["smoke_sec_per_problem"]
-            block = (
-                f"{N_START}\n**N = {plan['n']}** (locked automatically at {plan['locked_at']}, before any "
-                f"accuracy was computed). Smoke-test seconds/problem: "
-                + ", ".join(f"{k} {v:.1f}" for k, v in sec.items())
-                + f"; sum {sum(sec.values()):.1f}s; budget {plan['gsm8k_budget_hours']:.0f} h.\n{N_END}"
-            )
-            pre, rest = text.split(N_START, 1)
-            post = rest.split(N_END, 1)[1]
-            self.eval_plan.write_text(pre + block + post, encoding="utf-8")
-        except Exception as e:
-            self.log(f"Could not write N into EVAL_PLAN.md: {e}")
 
     # -- full runs --------------------------------------------------------------
     def run_job(self, dataset: str, cfg: str) -> None:

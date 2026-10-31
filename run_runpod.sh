@@ -83,5 +83,5 @@ for i in $(seq 0 10); do
 done
 [ "$code" -ne 0 ] && ntfy "Gave up after 10 restarts. Check results/run.log." urgent
 
-tar czf /workspace/psiduck_results.tar.gz results SUMMARY.md README.md EVAL_PLAN.md 2> /dev/null
+tar czf /workspace/psiduck_results.tar.gz results SUMMARY.md README.md 2> /dev/null
 ntfy "DONE. Results packed at /workspace/psiduck_results.tar.gz. Download it, then STOP THE POD (it keeps billing until you do)." urgent
