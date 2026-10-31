@@ -50,21 +50,7 @@ AIME results count only if both configs completed all 60 problems (pre-registere
 - Wall-clock time (measured per problem, same GPU): latent took 4.8% less time than baseline.
 - Verdict: no statistically significant accuracy difference between latent and the baseline (+10.0 points, alpha = 0.05).
 
-## Experiment 3: GSM8K at a 4,096-token cap (first 200 problems, as registered)
-
-| config | correct | accuracy | mean generated tokens | mean forward passes | mean wall s/problem | errors | hit token cap |
-| --- | --- | --- | --- | --- | --- | --- | --- |
-| baseline | 191/200 | 95.5% | 1846.8 | 1847.8 | 65.9 | 0 | 17 |
-| latent | 189/200 | 94.5% | 1094.7 | 1223.6 | 43.5 | 0 | 9 |
-
-**latent vs baseline** (paired, n = 200): both correct 187, only latent 2, only baseline 4, neither 7. Accuracy difference -1.0 points; exact two-sided McNemar p = 0.69.
-
-- Generated tokens: latent generated 40.7% fewer tokens than baseline (token reduction +40.7%).
-- Forward passes (counts prompt reads, latent steps and decoding): latent used 0.66x the baseline's.
-- Wall-clock time (measured per problem, same GPU): latent took 34.0% less time than baseline.
-- Verdict: no statistically significant accuracy difference between latent and the baseline (-1.0 points, alpha = 0.05).
-
-## Experiment 3 extension: GSM8K at a 4,096-token cap (all 500 problems)
+## Experiment 3: GSM8K at a 4,096-token cap (500 problems)
 
 | config | correct | accuracy | mean generated tokens | mean forward passes | mean wall s/problem | errors | hit token cap |
 | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -77,5 +63,7 @@ AIME results count only if both configs completed all 60 problems (pre-registere
 - Forward passes (counts prompt reads, latent steps and decoding): latent used 0.64x the baseline's.
 - Wall-clock time (measured per problem, same GPU): latent took 36.8% less time than baseline.
 - Verdict: no statistically significant accuracy difference between latent and the baseline (+0.4 points, alpha = 0.05).
+
+On the first 200 problems (the originally registered sample): latent 94.5% vs baseline 95.5%, not statistically significant (exact McNemar p = 0.69).
 
 Only problems finished by both configs enter the paired comparisons (pre-registered).

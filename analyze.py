@@ -19,7 +19,8 @@ def main() -> int:
     summary = build_summary(results, plan)
     (REPO_ROOT / "SUMMARY.md").write_text(summary, encoding="utf-8")
     write_figure(results, plan, REPO_ROOT / "docs" / "accuracy_vs_compute.svg")
-    inject_readme(REPO_ROOT / "README.md", summary, tldr=build_tldr(results, plan),
+    # The README shows significance in words; exact p-values stay in SUMMARY.md.
+    inject_readme(REPO_ROOT / "README.md", build_summary(results, plan, show_p=False), tldr=build_tldr(results, plan),
                   limitations=build_limitations(results, plan))
     print(summary)
     return 0

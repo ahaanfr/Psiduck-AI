@@ -367,7 +367,7 @@ class Runner:
         summary = analysis.build_summary(self.dir, self.plan())
         (self.dir.parent / "SUMMARY.md").write_text(summary, encoding="utf-8")
         (self.dir / "SUMMARY.md").write_text(summary, encoding="utf-8")
-        analysis.inject_readme(self.readme, summary)
+        analysis.inject_readme(self.readme, analysis.build_summary(self.dir, self.plan(), show_p=False))
         return summary
 
     # -- main -------------------------------------------------------------------
